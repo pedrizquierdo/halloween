@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Halloween Monsters</h1>
+        <h1>Halloween Monsters by cozcatl</h1>
 
         <form action="/monster" method="post">
             <label>Nombre <input type="text" name="name" required></label>
@@ -29,5 +29,49 @@
             {% endfor %}
         </table>
     </div>
+
+    <div class="jumpscare" id="jumpscare" hidden>
+        <img src="{{ url_for('static', filename='img/jumpscare.gif') }}" alt="">
+    </div>
+
+    <script>
+        (function () {
+            const overlay = document.getElementById('jumpscare');
+
+            // Only scare once per browser session, so submitting the form doesn't retrigger it.
+            try {
+                if (sessionStorage.getItem('jumpscared')) return;
+                sessionStorage.setItem('jumpscared', '1');
+            } catch (e) {}
+
+            function scream() {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                ctx.resume();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(900, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(180, ctx.currentTime + 1.2);
+                gain.gain.setValueAtTime(0.4, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.3);
+                osc.connect(gain).connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 1.3);
+            }
+
+            function hide() {
+                if (overlay.classList.contains('fade-out')) return;
+                overlay.classList.add('fade-out');
+                setTimeout(function () { overlay.hidden = true; }, 600);
+            }
+
+            overlay.hidden = false;
+            scream();
+            overlay.addEventListener('click', hide);
+            setTimeout(hide, 1800);
+        })();
+    </script>
 </body>
 </html>
