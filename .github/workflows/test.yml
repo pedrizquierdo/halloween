@@ -51,4 +51,4 @@ jobs:
               power VARCHAR(100) NOT NULL
             );"
 
-      - run: python -m unittest -v
+      - run: python -m unittest discover -s tests -v
