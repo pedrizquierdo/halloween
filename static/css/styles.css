@@ -104,7 +104,20 @@ tr:nth-child(even) td {
     background: #000;
     cursor: pointer;
     overflow: hidden;
-    animation: jumpscare-flash 0.12s steps(2) 4;
+}
+
+/* Red flash layered over the GIF right before the fade (the loop lasts 4s). */
+.jumpscare::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #8b0000;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.jumpscare.playing::after {
+    animation: jumpscare-flash 0.12s linear 3.52s 4;
 }
 
 .jumpscare[hidden] {
@@ -117,9 +130,14 @@ tr:nth-child(even) td {
     max-width: 90vw;
     object-fit: contain;
     transform-origin: center;
+    visibility: hidden;
+}
+
+.jumpscare.playing img {
+    visibility: visible;
     animation:
         jumpscare-pop 0.25s ease-out,
-        jumpscare-push 2.2s ease-in 0.25s forwards,
+        jumpscare-push 4s ease-in 0.25s forwards,
         jumpscare-shake 0.08s linear 0.25s infinite;
 }
 
@@ -142,7 +160,8 @@ tr:nth-child(even) td {
 }
 
 @keyframes jumpscare-flash {
-    50% { background: #8b0000; }
+    0%, 49% { opacity: 0; }
+    50%, 100% { opacity: 0.7; }
 }
 
 .jumpscare.fade-out {

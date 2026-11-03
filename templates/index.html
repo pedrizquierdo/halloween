@@ -7,31 +7,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Halloween Monsters by cozcatl</h1>
-
-        <form action="/monster" method="post">
-            <label>Nombre <input type="text" name="name" required></label>
-            <label>Poder <input type="text" name="power" required></label>
-            <button type="submit">Agregar</button>
-        </form>
-
-        <table>
-            <tr>
-                <th>Nombre</th>
-                <th>Poder</th>
-            </tr>
-            {% for monster in monsters %}
-            <tr>
-                <td>{{ monster.name }}</td>
-                <td>{{ monster.power }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
-
-    <div class="jumpscare" id="jumpscare" hidden>
-        <img src="{{ url_for('static', filename='img/jumpscare.gif') }}" alt="">
+    <div class="jumpscare" id="jumpscare">
+        <img data-src="{{ url_for('static', filename='img/jumpscare.gif') }}" alt="">
     </div>
 
     <script>
@@ -40,7 +17,10 @@
 
             // Only scare once per browser session, so submitting the form doesn't retrigger it.
             try {
-                if (sessionStorage.getItem('jumpscared')) return;
+                if (sessionStorage.getItem('jumpscared')) {
+                    overlay.hidden = true;
+                    return;
+                }
                 sessionStorage.setItem('jumpscared', '1');
             } catch (e) {}
 
@@ -67,11 +47,44 @@
                 setTimeout(function () { overlay.hidden = true; }, 600);
             }
 
-            overlay.hidden = false;
-            scream();
-            overlay.addEventListener('click', hide);
-            setTimeout(hide, 1800);
+            // One full loop of the GIF (it starts on the black frame), so the fade begins as it returns there.
+            const GIF_LOOP_MS = 4000;
+            const img = overlay.querySelector('img');
+
+            // The overlay is black from the first paint; animations start once the GIF has loaded
+            // so the timer lines up with its first frame.
+            img.addEventListener('load', function () {
+                overlay.classList.add('playing');
+                scream();
+                overlay.addEventListener('click', hide);
+                setTimeout(hide, GIF_LOOP_MS);
+            }, { once: true });
+            img.addEventListener('error', hide, { once: true });
+            img.src = img.dataset.src;
         })();
     </script>
+
+    <div class="container">
+        <h1>Halloween Monsters by cozcatl</h1>
+
+        <form action="/monster" method="post">
+            <label>Nombre <input type="text" name="name" required></label>
+            <label>Poder <input type="text" name="power" required></label>
+            <button type="submit">Agregar</button>
+        </form>
+
+        <table>
+            <tr>
+                <th>Nombre</th>
+                <th>Poder</th>
+            </tr>
+            {% for monster in monsters %}
+            <tr>
+                <td>{{ monster.name }}</td>
+                <td>{{ monster.power }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
 </body>
 </html>
