@@ -23,7 +23,7 @@ class TestMonster(unittest.TestCase):
 
         saved = [m for m in Monster.get_all() if m['name'] == self.name]
         self.assertEqual(len(saved), 1)
-        self.assertEqual(saved[0]['power'], 'Vuelo')
+        self.assertEqual(saved[0]['power'], 'Flight')
 
 
 if __name__ == '__main__':
