@@ -76,14 +76,12 @@
                 <th>Nombre</th>
                 <th>Poder</th>
                 <th>Historia</th>
-                <th></th>
             </tr>
             {% for monster in monsters %}
             <tr>
                 <td>{{ monster.name }}</td>
                 <td>{{ monster.power }}</td>
                 <td>{{ monster.history }}</td>
-                <td><button type="button" class="row-button">Editar</button></td>
             </tr>
             {% endfor %}
         </table>
