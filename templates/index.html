@@ -14,8 +14,6 @@
     <script>
         (function () {
             const overlay = document.getElementById('jumpscare');
-
-            // Only scare once per browser session, so submitting the form doesn't retrigger it.
             try {
                 if (sessionStorage.getItem('jumpscared')) {
                     overlay.hidden = true;
@@ -77,11 +75,13 @@
             <tr>
                 <th>Nombre</th>
                 <th>Poder</th>
+                <th>Historia</th>
             </tr>
             {% for monster in monsters %}
             <tr>
                 <td>{{ monster.name }}</td>
                 <td>{{ monster.power }}</td>
+                <td>{{ monster.history }}</td>
             </tr>
             {% endfor %}
         </table>
